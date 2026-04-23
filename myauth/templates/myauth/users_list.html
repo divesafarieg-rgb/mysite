@@ -1,0 +1,43 @@
+{% extends 'myauth/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Все пользователи{% else %}All Users{% endif %}
+{% endblock %}
+
+{% block body %}
+  <h1>
+    {% if LANGUAGE_CODE == 'ru' %}Все пользователи{% else %}All Users{% endif %}
+  </h1>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+    {% for user_obj in users %}
+      <div style="border: 1px solid #ccc; border-radius: 8px; padding: 15px; text-align: center;">
+        {% if user_obj.profile.avatar %}
+          <img src="{{ user_obj.profile.avatar.url }}" alt="Avatar" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+        {% else %}
+          <div style="width: 100px; height: 100px; background-color: #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            {% if LANGUAGE_CODE == 'ru' %}Нет фото{% else %}No photo{% endif %}
+          </div>
+        {% endif %}
+
+        <h3 style="margin: 10px 0 5px;">{{ user_obj.username }}</h3>
+        <p style="color: #666; margin: 0 0 10px;">{{ user_obj.first_name }} {{ user_obj.last_name }}</p>
+        <a href="{% url 'myauth:user_detail' user_id=user_obj.id %}" style="background-color: #2196F3; color: white; padding: 5px 15px; text-decoration: none; border-radius: 3px;">
+          {% if LANGUAGE_CODE == 'ru' %}Просмотреть профиль{% else %}View Profile{% endif %}
+        </a>
+      </div>
+    {% empty %}
+      <p>
+        {% if LANGUAGE_CODE == 'ru' %}Пользователи не найдены.{% else %}No users found.{% endif %}
+      </p>
+    {% endfor %}
+  </div>
+
+  <div style="margin-top: 20px;">
+    <a href="{% url 'myauth:about-me' %}">
+      ← {% if LANGUAGE_CODE == 'ru' %}Назад к моему профилю{% else %}Back to my profile{% endif %}
+    </a>
+  </div>
+{% endblock %}

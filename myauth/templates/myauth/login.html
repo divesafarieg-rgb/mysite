@@ -1,0 +1,41 @@
+{% extends 'myauth/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Вход в систему{% else %}Login{% endif %}
+{% endblock %}
+
+{% block body %}
+  <h1>
+    {% if LANGUAGE_CODE == 'ru' %}Вход в систему{% else %}Login{% endif %}
+  </h1>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div style="margin-bottom: 15px;">
+      <label for="id_username">
+        {% if LANGUAGE_CODE == 'ru' %}Имя пользователя{% else %}Username{% endif %}:
+      </label>
+      <input type="text" name="username" id="id_username" required>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="id_password">
+        {% if LANGUAGE_CODE == 'ru' %}Пароль{% else %}Password{% endif %}:
+      </label>
+      <input type="password" name="password" id="id_password" required>
+    </div>
+
+    <button type="submit">
+      {% if LANGUAGE_CODE == 'ru' %}Войти{% else %}Login{% endif %}
+    </button>
+  </form>
+
+  <div style="margin-top: 20px;">
+    <a href="{% url 'myauth:register' %}">
+      {% if LANGUAGE_CODE == 'ru' %}Нет аккаунта? Зарегистрироваться{% else %}Don't have an account? Register{% endif %}
+    </a>
+  </div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'myauth/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Профиль пользователя{% else %}User Profile{% endif %} - {{ user_obj.username }}
+{% endblock %}
+
+{% block body %}
+  <h1>
+    {% if LANGUAGE_CODE == 'ru' %}Профиль пользователя{% else %}User Profile{% endif %}: {{ user_obj.username }}
+  </h1>
+
+  <div style="display: flex; gap: 30px;">
+    <div>
+      <h3>
+        {% if LANGUAGE_CODE == 'ru' %}Аватар{% else %}Avatar{% endif %}
+      </h3>
+      {% if user_obj.profile.avatar %}
+        <img src="{{ user_obj.profile.avatar.url }}" alt="Avatar" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;">
+      {% else %}
+        <div style="width: 200px; height: 200px; background-color: #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          {% if LANGUAGE_CODE == 'ru' %}Нет аватара{% else %}No avatar{% endif %}
+        </div>
+      {% endif %}
+
+      {% if can_edit %}
+        <div style="margin-top: 15px;">
+          <a href="{% url 'myauth:profile_update' user_id=user_obj.id %}" style="display: inline-block; background-color: #2196F3; color: white; padding: 8px 16px; text-decoration: none; border-radius: 3px;">
+            ✏️ {% if LANGUAGE_CODE == 'ru' %}Редактировать профиль{% else %}Edit profile{% endif %}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div>
+      <h3>
+        {% if LANGUAGE_CODE == 'ru' %}Информация{% else %}Information{% endif %}
+      </h3>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Имя пользователя{% else %}Username{% endif %}:</strong> {{ user_obj.username }}
+      </p>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Имя{% else %}First name{% endif %}:</strong>
+        {{ user_obj.first_name|default:_("Not specified") }}
+      </p>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Фамилия{% else %}Last name{% endif %}:</strong>
+        {{ user_obj.last_name|default:_("Not specified") }}
+      </p>
+      <p><strong>Email:</strong> {{ user_obj.email }}</p>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}О себе{% else %}Bio{% endif %}:</strong>
+        {{ user_obj.profile.bio|default:_("Not specified") }}
+      </p>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Дата рождения{% else %}Birth date{% endif %}:</strong>
+        {{ user_obj.profile.birth_date|default:_("Not specified") }}
+      </p>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Телефон{% else %}Phone{% endif %}:</strong>
+        {{ user_obj.profile.phone_number|default:_("Not specified") }}
+      </p>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Зарегистрирован{% else %}Registered{% endif %}:</strong>
+        {{ user_obj.date_joined|date:"d.m.Y H:i" }}
+      </p>
+
+      {% if user_obj.is_staff %}
+        <p>
+          <strong>{% if LANGUAGE_CODE == 'ru' %}Статус{% else %}Status{% endif %}:</strong>
+          {% if LANGUAGE_CODE == 'ru' %}Сотрудник{% else %}Staff{% endif %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <a href="{% url 'myauth:users_list' %}">
+      ← {% if LANGUAGE_CODE == 'ru' %}Назад к списку пользователей{% else %}Back to users list{% endif %}
+    </a>
+    {% if user == user_obj %}
+      <span style="margin: 0 10px">|</span>
+      <a href="{% url 'myauth:about-me' %}">
+        {% if LANGUAGE_CODE == 'ru' %}Мой профиль{% else %}My profile{% endif %}
+      </a>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'myauth/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Регистрация{% else %}Register{% endif %}
+{% endblock %}
+
+{% block body %}
+  <h1>
+    {% if LANGUAGE_CODE == 'ru' %}Регистрация нового пользователя{% else %}Register new user{% endif %}
+  </h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div style="background-color: #ffcccc; padding: 10px; margin: 10px 0; border-radius: 5px;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div style="margin-bottom: 15px;">
+      <label for="{{ form.username.id_for_label }}">
+        {% if LANGUAGE_CODE == 'ru' %}Имя пользователя{% else %}Username{% endif %}:
+      </label>
+      {{ form.username }}
+      {% if form.username.help_text %}
+        <small style="display: block; color: #666;">{{ form.username.help_text }}</small>
+      {% endif %}
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="{{ form.email.id_for_label }}">
+        {% if LANGUAGE_CODE == 'ru' %}Электронная почта{% else %}Email{% endif %}:
+      </label>
+      {{ form.email }}
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="{{ form.first_name.id_for_label }}">
+        {% if LANGUAGE_CODE == 'ru' %}Имя{% else %}First name{% endif %}:
+      </label>
+      {{ form.first_name }}
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="{{ form.last_name.id_for_label }}">
+        {% if LANGUAGE_CODE == 'ru' %}Фамилия{% else %}Last name{% endif %}:
+      </label>
+      {{ form.last_name }}
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="{{ form.password1.id_for_label }}">
+        {% if LANGUAGE_CODE == 'ru' %}Пароль{% else %}Password{% endif %}:
+      </label>
+      {{ form.password1 }}
+      {% if form.password1.help_text %}
+        <small style="display: block; color: #666;">{{ form.password1.help_text }}</small>
+      {% endif %}
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="{{ form.password2.id_for_label }}">
+        {% if LANGUAGE_CODE == 'ru' %}Подтверждение пароля{% else %}Password confirmation{% endif %}:
+      </label>
+      {{ form.password2 }}
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="{{ form.bio.id_for_label }}">
+        {% if LANGUAGE_CODE == 'ru' %}О себе{% else %}Bio{% endif %}:
+      </label>
+      {{ form.bio }}
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="{{ form.birth_date.id_for_label }}">
+        {% if LANGUAGE_CODE == 'ru' %}Дата рождения{% else %}Birth date{% endif %}:
+      </label>
+      {{ form.birth_date }}
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="{{ form.phone_number.id_for_label }}">
+        {% if LANGUAGE_CODE == 'ru' %}Телефон{% else %}Phone number{% endif %}:
+      </label>
+      {{ form.phone_number }}
+    </div>
+
+    <button type="submit">
+      {% if LANGUAGE_CODE == 'ru' %}Зарегистрироваться{% else %}Register{% endif %}
+    </button>
+  </form>
+
+  <div style="margin-top: 20px;">
+    <a href="{% url 'myauth:login' %}">
+      {% if LANGUAGE_CODE == 'ru' %}Уже есть аккаунт? Войти{% else %}Already have an account? Login{% endif %}
+    </a>
+  </div>
+{% endblock %}
