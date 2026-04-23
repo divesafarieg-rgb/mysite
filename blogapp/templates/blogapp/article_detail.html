@@ -1,0 +1,47 @@
+{% extends 'blogapp/base.html' %}
+{% load i18n %}
+
+{% block title %}
+  {{ article.title }}
+{% endblock %}
+
+{% block body %}
+  <article>
+    <h1>{{ article.title }}</h1>
+
+    <div class="article-meta" style="color: #666; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Дата публикации{% else %}Published{% endif %}:</strong>
+        {{ article.pub_date|date:"d.m.Y H:i" }}
+      </p>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Автор{% else %}Author{% endif %}:</strong>
+        {{ article.author.name }}
+      </p>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Категория{% else %}Category{% endif %}:</strong>
+        {{ article.category.name }}
+      </p>
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Теги{% else %}Tags{% endif %}:</strong>
+        {% for tag in article.tags.all %}
+          <span class="tag" style="background-color: #e0e0e0; padding: 2px 8px; margin: 0 2px; border-radius: 3px;">
+            {{ tag.name }}
+          </span>
+        {% empty %}
+          <span>{% if LANGUAGE_CODE == 'ru' %}Нет тегов{% else %}No tags{% endif %}</span>
+        {% endfor %}
+      </p>
+    </div>
+
+    <div class="article-content" style="line-height: 1.6;">
+      {{ article.content|linebreaks }}
+    </div>
+  </article>
+
+  <div style="margin-top: 20px;">
+    <a href="{% url 'blogapp:articles_list' %}">
+      ← {% if LANGUAGE_CODE == 'ru' %}Назад к списку статей{% else %}Back to articles list{% endif %}
+    </a>
+  </div>
+{% endblock %}

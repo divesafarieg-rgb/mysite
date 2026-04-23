@@ -1,0 +1,82 @@
+{% extends 'blogapp/base.html' %}
+{% load i18n %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Список статей{% else %}Articles list{% endif %}
+{% endblock %}
+
+{% block body %}
+  <h1>{% if LANGUAGE_CODE == 'ru' %}Список статей{% else %}Articles{% endif %}</h1>
+
+  {% if articles %}
+    <div class="articles-list">
+      {% for article in articles %}
+        <article class="article-item" style="border: 1px solid #ccc; margin: 20px 0; padding: 15px; border-radius: 5px;">
+          <h2>
+            <a href="{% url 'blogapp:article_detail' pk=article.pk %}">
+              {{ article.title }}
+            </a>
+          </h2>
+
+          <div class="article-meta" style="color: #666; margin-bottom: 10px;">
+            <p>
+              <strong>{% if LANGUAGE_CODE == 'ru' %}Дата публикации{% else %}Published{% endif %}:</strong>
+              {{ article.pub_date|date:"d.m.Y H:i" }}
+            </p>
+            <p>
+              <strong>{% if LANGUAGE_CODE == 'ru' %}Автор{% else %}Author{% endif %}:</strong>
+              {{ article.author.name }}
+            </p>
+            <p>
+              <strong>{% if LANGUAGE_CODE == 'ru' %}Категория{% else %}Category{% endif %}:</strong>
+              {{ article.category.name }}
+            </p>
+            <p>
+              <strong>{% if LANGUAGE_CODE == 'ru' %}Теги{% else %}Tags{% endif %}:</strong>
+              {% for tag in article.tags.all %}
+                <span class="tag" style="background-color: #e0e0e0; padding: 2px 8px; margin: 0 2px; border-radius: 3px;">
+                  {{ tag.name }}
+                </span>
+              {% empty %}
+                <span>{% if LANGUAGE_CODE == 'ru' %}Нет тегов{% else %}No tags{% endif %}</span>
+              {% endfor %}
+            </p>
+          </div>
+
+          {# Краткое содержание статьи (без полного content) #}
+          <div class="article-excerpt">
+            <p>{{ article.content|truncatewords:30|default:"" }}</p>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    {# Пагинация #}
+    {% if is_paginated %}
+      <div class="pagination" style="margin-top: 20px; text-align: center;">
+        <span class="step-links">
+          {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; {% if LANGUAGE_CODE == 'ru' %}Первая{% else %}First{% endif %}</a>
+            <a href="?page={{ page_obj.previous_page_number }}">{% if LANGUAGE_CODE == 'ru' %}Предыдущая{% else %}Previous{% endif %}</a>
+          {% endif %}
+
+          <span class="current">
+            {% if LANGUAGE_CODE == 'ru' %}Страница{% else %}Page{% endif %} {{ page_obj.number }}
+            {% if LANGUAGE_CODE == 'ru' %}из{% else %}of{% endif %} {{ page_obj.paginator.num_pages }}
+          </span>
+
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">{% if LANGUAGE_CODE == 'ru' %}Следующая{% else %}Next{% endif %}</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">{% if LANGUAGE_CODE == 'ru' %}Последняя{% else %}Last{% endif %} &raquo;</a>
+          {% endif %}
+        </span>
+      </div>
+    {% endif %}
+  {% else %}
+    <p>{% if LANGUAGE_CODE == 'ru' %}Статьи пока не добавлены.{% else %}No articles yet.{% endif %}</p>
+  {% endif %}
+
+  <div style="margin-top: 20px;">
+    <a href="{% url 'shopapp:index' %}">← {% if LANGUAGE_CODE == 'ru' %}На главную{% else %}Back to home{% endif %}</a>
+  </div>
+{% endblock %}
