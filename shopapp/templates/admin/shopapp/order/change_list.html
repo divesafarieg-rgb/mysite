@@ -1,0 +1,15 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools %}
+    <div class="object-tools">
+        <ul class="object-tools">
+            <li>
+                <a href="{% url 'admin:import_orders' %}" class="addlink">
+                    {% trans "Импорт заказов из CSV" %}
+                </a>
+            </li>
+            {{ block.super }}
+        </ul>
+    </div>
+{% endblock %}
