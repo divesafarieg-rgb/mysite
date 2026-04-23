@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  web:
+    image: mysite-web:latest
+    ports:
+      - "8080:8000"
+    environment:
+      - DEBUG=1
