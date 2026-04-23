@@ -1,0 +1,100 @@
+{% extends 'shopapp/base.html' %}
+{% load i18n cache %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Заказы пользователя{% else %}User Orders{% endif %} - {{ owner.username }}
+{% endblock %}
+
+{% block body %}
+  <h1>
+    {% if LANGUAGE_CODE == 'ru' %}
+      Заказы пользователя: {{ owner.username }}
+    {% else %}
+      Orders of user: {{ owner.username }}
+    {% endif %}
+  </h1>
+
+  {% if orders %}
+    <p>
+      {% if LANGUAGE_CODE == 'ru' %}
+        Пользователь <strong>{{ owner.username }}</strong> выполнил следующие заказы:
+      {% else %}
+        User <strong>{{ owner.username }}</strong> has made the following orders:
+      {% endif %}
+    </p>
+
+    {% cache 300 user_orders_cache owner.id %}
+      <div class="orders-list">
+        {% for order in orders %}
+          <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px; border-radius: 5px;">
+            <h3>
+              {% if LANGUAGE_CODE == 'ru' %}Заказ{% else %}Order{% endif %} #{{ order.id }}
+            </h3>
+            <p>
+              <strong>{% if LANGUAGE_CODE == 'ru' %}Дата{% else %}Date{% endif %}:</strong>
+              {{ order.created_at|date:"d.m.Y H:i" }}
+            </p>
+            <p>
+              <strong>{% if LANGUAGE_CODE == 'ru' %}Адрес доставки{% else %}Delivery address{% endif %}:</strong>
+              {{ order.delivery_address|default:"-" }}
+            </p>
+            <p>
+              <strong>{% if LANGUAGE_CODE == 'ru' %}Промокод{% else %}Promocode{% endif %}:</strong>
+              {{ order.promocode|default:"-" }}
+            </p>
+            <p>
+              <strong>{% if LANGUAGE_CODE == 'ru' %}Товары{% else %}Products{% endif %}:</strong>
+            </p>
+            <ul>
+              {% for product in order.products.all %}
+                <li>{{ product.name }} - {{ product.price }} {% if LANGUAGE_CODE == 'ru' %}руб.{% else %}RUB{% endif %}</li>
+              {% empty %}
+                <li>{% if LANGUAGE_CODE == 'ru' %}Нет товаров{% else %}No products{% endif %}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated %}
+        <div class="pagination">
+          <span class="step-links">
+            {% if page_obj.has_previous %}
+              <a href="?page=1">&laquo; {% if LANGUAGE_CODE == 'ru' %}Первая{% else %}First{% endif %}</a>
+              <a href="?page={{ page_obj.previous_page_number }}">{% if LANGUAGE_CODE == 'ru' %}Предыдущая{% else %}Previous{% endif %}</a>
+            {% endif %}
+
+            <span class="current">
+              {% if LANGUAGE_CODE == 'ru' %}Страница{% else %}Page{% endif %} {{ page_obj.number }}
+              {% if LANGUAGE_CODE == 'ru' %}из{% else %}of{% endif %} {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}">{% if LANGUAGE_CODE == 'ru' %}Следующая{% else %}Next{% endif %}</a>
+              <a href="?page={{ page_obj.paginator.num_pages }}">{% if LANGUAGE_CODE == 'ru' %}Последняя{% else %}Last{% endif %} &raquo;</a>
+            {% endif %}
+          </span>
+        </div>
+      {% endif %}
+    {% endcache %}
+
+  {% else %}
+    <p>
+      {% if LANGUAGE_CODE == 'ru' %}
+        У пользователя <strong>{{ owner.username }}</strong> ещё нет заказов.
+      {% else %}
+        User <strong>{{ owner.username }}</strong> has no orders yet.
+      {% endif %}
+    </p>
+  {% endif %}
+
+  <div style="margin-top: 20px;">
+    <a href="{% url 'shopapp:user_orders_export' user_id=owner.id %}">
+      {% if LANGUAGE_CODE == 'ru' %}📥 Экспорт заказов в JSON{% else %}📥 Export orders to JSON{% endif %}
+    </a>
+  </div>
+
+  <div style="margin-top: 10px;">
+    <a href="{% url 'shopapp:index' %}">← {% if LANGUAGE_CODE == 'ru' %}На главную{% else %}Back to home{% endif %}</a>
+  </div>
+{% endblock %}

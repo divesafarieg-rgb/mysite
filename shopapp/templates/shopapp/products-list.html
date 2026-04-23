@@ -1,0 +1,37 @@
+{% extends 'shopapp/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Список товаров{% else %}Products list{% endif %}
+{% endblock %}
+
+{% block body %}
+  <h1>{% if LANGUAGE_CODE == 'ru' %}Товары{% else %}Products{% endif %}:</h1>
+
+  {% if products %}
+    <div>
+      {% for product in products %}
+        <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+          <p><a href="{% url 'shopapp:product_details' pk=product.pk %}">
+            <strong>{{ product.name }}</strong>
+          </a></p>
+          <p>{% if LANGUAGE_CODE == 'ru' %}Цена{% else %}Price{% endif %}: {{ product.price }} {% if LANGUAGE_CODE == 'ru' %}руб.{% else %}RUB{% endif %}</p>
+          <p>{% if LANGUAGE_CODE == 'ru' %}Скидка{% else %}Discount{% endif %}:
+            {% if product.discount %}{{ product.discount }}%{% else %}{% if LANGUAGE_CODE == 'ru' %}нет{% else %}no{% endif %}{% endif %}
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <h3>{% if LANGUAGE_CODE == 'ru' %}Пока нет товаров{% else %}No products yet{% endif %}</h3>
+  {% endif %}
+
+  {% if perms.shopapp.can_create_product %}
+    <div>
+      <a href="{% url 'shopapp:product_create' %}">
+        ➕ {% if LANGUAGE_CODE == 'ru' %}Создать новый товар{% else %}Create a new product{% endif %}
+      </a>
+    </div>
+  {% endif %}
+{% endblock %}

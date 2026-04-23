@@ -1,0 +1,48 @@
+{% extends 'shopapp/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Главная магазина{% else %}Shop Home{% endif %}
+{% endblock %}
+
+{% block body %}
+  <h1>
+    {% if LANGUAGE_CODE == 'ru' %}Добро пожаловать в магазин!{% else %}Welcome to the shop!{% endif %}
+  </h1>
+
+  <div>
+    <ul>
+      <li>
+        <a href="{% url 'shopapp:products_list' %}">
+          {% if LANGUAGE_CODE == 'ru' %}Товары{% else %}Products{% endif %}
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'shopapp:orders_list' %}">
+          {% if LANGUAGE_CODE == 'ru' %}Заказы{% else %}Orders{% endif %}
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'myauth:users_list' %}">
+          {% if LANGUAGE_CODE == 'ru' %}Пользователи{% else %}Users{% endif %}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    <p>
+      {% if LANGUAGE_CODE == 'ru' %}Добро пожаловать в наш интернет-магазин!{% else %}Welcome to our online store!{% endif %}
+    </p>
+    {% if user.is_authenticated %}
+      <p>
+        {% if LANGUAGE_CODE == 'ru' %}Здравствуйте{% else %}Hello{% endif %}, {{ user.username }}!
+      </p>
+    {% else %}
+      <p>
+        {% if LANGUAGE_CODE == 'ru' %}Пожалуйста, войдите или зарегистрируйтесь.{% else %}Please login or register.{% endif %}
+      </p>
+    {% endif %}
+  </div>
+{% endblock %}

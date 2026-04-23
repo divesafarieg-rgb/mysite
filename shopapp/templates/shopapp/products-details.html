@@ -1,0 +1,67 @@
+{% extends 'shopapp/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Товар{% else %}Product{% endif %} #{{ product.pk }}
+{% endblock %}
+
+{% block body %}
+  <h1>
+    {% if LANGUAGE_CODE == 'ru' %}Товар{% else %}Product{% endif %}:
+    <strong>{{ product.name }}</strong>
+  </h1>
+
+  <div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+    <p>
+      <strong>{% if LANGUAGE_CODE == 'ru' %}Описание{% else %}Description{% endif %}:</strong>
+      {{ product.description|default:"" }}
+    </p>
+    <p>
+      <strong>{% if LANGUAGE_CODE == 'ru' %}Цена{% else %}Price{% endif %}:</strong>
+      {{ product.price }} {% if LANGUAGE_CODE == 'ru' %}руб.{% else %}RUB{% endif %}
+    </p>
+    <p>
+      <strong>{% if LANGUAGE_CODE == 'ru' %}Скидка{% else %}Discount{% endif %}:</strong>
+      {% if product.discount %}
+        {{ product.discount }}%
+      {% else %}
+        {% if LANGUAGE_CODE == 'ru' %}нет скидки{% else %}no discount{% endif %}
+      {% endif %}
+    </p>
+    <p>
+      <strong>{% if LANGUAGE_CODE == 'ru' %}Архивирован{% else %}Archived{% endif %}:</strong>
+      {% if product.archived %}
+        {% if LANGUAGE_CODE == 'ru' %}Да{% else %}Yes{% endif %}
+      {% else %}
+        {% if LANGUAGE_CODE == 'ru' %}Нет{% else %}No{% endif %}
+      {% endif %}
+    </p>
+    {% if product.created_by %}
+      <p>
+        <strong>{% if LANGUAGE_CODE == 'ru' %}Создал{% else %}Created by{% endif %}:</strong>
+        {{ product.created_by.username }}
+      </p>
+    {% endif %}
+  </div>
+
+  {% if user.is_superuser or perms.shopapp.can_edit_product and product.created_by == user %}
+    <div style="margin: 20px 0;">
+      <a href="{% url 'shopapp:product_update' pk=product.pk %}">
+        ✏️ {% if LANGUAGE_CODE == 'ru' %}Редактировать товар{% else %}Update product{% endif %}
+      </a>
+    </div>
+  {% endif %}
+
+  <div>
+    <a href="{% url 'shopapp:product_delete' pk=product.pk %}">
+      🗑️ {% if LANGUAGE_CODE == 'ru' %}Архивировать товар{% else %}Archive product{% endif %}
+    </a>
+  </div>
+
+  <div style="margin-top: 10px;">
+    <a href="{% url 'shopapp:products_list' %}">
+      ← {% if LANGUAGE_CODE == 'ru' %}Назад к списку товаров{% else %}Back to products list{% endif %}
+    </a>
+  </div>
+{% endblock %}

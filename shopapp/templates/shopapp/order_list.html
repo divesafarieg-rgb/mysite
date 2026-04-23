@@ -1,0 +1,47 @@
+{% extends 'shopapp/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Список заказов{% else %}Orders list{% endif %}
+{% endblock %}
+
+{% block body %}
+  <h1>
+    {% if LANGUAGE_CODE == 'ru' %}Заказы:{% else %}Orders:{% endif %}
+  </h1>
+
+  {% if object_list %}
+    <div>
+      {% for order in object_list %}
+        <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+          <p><a href="{% url 'shopapp:order_details' pk=order.pk %}">
+            {% if LANGUAGE_CODE == 'ru' %}Заказ{% else %}Order{% endif %} #{{ order.pk }}
+          </a></p>
+          <p>
+            <strong>{% if LANGUAGE_CODE == 'ru' %}Заказчик{% else %}Customer{% endif %}:</strong>
+            {% firstof order.user.first_name order.user.username %}
+          </p>
+          <p>
+            <strong>{% if LANGUAGE_CODE == 'ru' %}Промокод{% else %}Promocode{% endif %}:</strong>
+            <code>{{ order.promocode|default:"-" }}</code>
+          </p>
+          <p>
+            <strong>{% if LANGUAGE_CODE == 'ru' %}Адрес доставки{% else %}Delivery address{% endif %}:</strong>
+            {{ order.delivery_address|default:"-" }}
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <h3>
+      {% if LANGUAGE_CODE == 'ru' %}Пока нет заказов{% else %}No orders yet{% endif %}
+    </h3>
+  {% endif %}
+
+  <div>
+    <a href="{% url 'shopapp:index' %}">
+      ← {% if LANGUAGE_CODE == 'ru' %}На главную{% else %}Back to home{% endif %}
+    </a>
+  </div>
+{% endblock %}

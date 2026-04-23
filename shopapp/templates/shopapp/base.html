@@ -1,0 +1,78 @@
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Мой магазин{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 1200px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 5px; }
+        nav { background-color: #333; padding: 10px; margin-bottom: 20px; border-radius: 5px; overflow: hidden; }
+        nav a { color: white; text-decoration: none; margin-right: 15px; }
+        nav a:hover { text-decoration: underline; }
+        .user-info { float: right; color: white; }
+        .logout-form { display: inline; }
+        .logout-button { background: none; border: none; color: white; cursor: pointer; padding: 0; font-size: 16px; margin-right: 15px; }
+        .language-selector { float: right; margin-right: 20px; color: white; }
+        .language-selector a { color: white; text-decoration: none; margin-left: 10px; }
+        .language-selector a.active { font-weight: bold; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'shopapp:index' %}">
+            {% if LANGUAGE_CODE == 'ru' %}Главная{% else %}Home{% endif %}
+        </a>
+        <a href="{% url 'shopapp:products_list' %}">
+            {% if LANGUAGE_CODE == 'ru' %}Товары{% else %}Products{% endif %}
+        </a>
+        <a href="{% url 'shopapp:orders_list' %}">
+            {% if LANGUAGE_CODE == 'ru' %}Заказы{% else %}Orders{% endif %}
+        </a>
+        <a href="{% url 'myauth:users_list' %}">
+            {% if LANGUAGE_CODE == 'ru' %}Пользователи{% else %}Users{% endif %}
+        </a>
+
+        <div class="language-selector">
+            <a href="/ru{{ request.get_full_path|slice:'3:' }}" {% if LANGUAGE_CODE == 'ru' %}class="active"{% endif %}>Русский</a>
+            <a href="/en{{ request.get_full_path|slice:'3:' }}" {% if LANGUAGE_CODE == 'en' %}class="active"{% endif %}>English</a>
+        </div>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'myauth:about-me' %}">
+                {% if LANGUAGE_CODE == 'ru' %}Мой профиль{% else %}My Profile{% endif %}
+            </a>
+            <form method="post" action="{% url 'myauth:logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">
+                    {% if LANGUAGE_CODE == 'ru' %}Выйти{% else %}Logout{% endif %}
+                </button>
+            </form>
+            <span class="user-info">
+                {% if LANGUAGE_CODE == 'ru' %}Добро пожаловать{% else %}Welcome{% endif %}, {{ user.username }}!
+            </span>
+        {% else %}
+            <a href="{% url 'myauth:login' %}">
+                {% if LANGUAGE_CODE == 'ru' %}Войти{% else %}Login{% endif %}
+            </a>
+            <a href="{% url 'myauth:register' %}">
+                {% if LANGUAGE_CODE == 'ru' %}Регистрация{% else %}Register{% endif %}
+            </a>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'shopapp:user_orders' user_id=user.id %}">
+                {% if LANGUAGE_CODE == 'ru' %}Мои заказы{% else %}My Orders{% endif %}
+            </a>
+        {% endif %}
+
+    </nav>
+
+    <div class="container">
+        {% block body %}
+        {% endblock %}
+    </div>
+</body>
+</html>

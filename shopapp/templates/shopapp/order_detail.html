@@ -1,0 +1,49 @@
+{% extends 'shopapp/base.html' %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if LANGUAGE_CODE == 'ru' %}Заказ{% else %}Order{% endif %} #{{ object.pk }}
+{% endblock %}
+
+{% block body %}
+  <h1>
+    {% if LANGUAGE_CODE == 'ru' %}Заказ{% else %}Order{% endif %} #{{ object.pk }}
+  </h1>
+
+  <div>
+    <p>
+      <strong>{% if LANGUAGE_CODE == 'ru' %}Заказчик{% else %}Customer{% endif %}:</strong>
+      {% firstof object.user.first_name object.user.username %}
+    </p>
+    <p>
+      <strong>{% if LANGUAGE_CODE == 'ru' %}Промокод{% else %}Promocode{% endif %}:</strong>
+      <code>{{ object.promocode|default:"-" }}</code>
+    </p>
+    <p>
+      <strong>{% if LANGUAGE_CODE == 'ru' %}Адрес доставки{% else %}Delivery address{% endif %}:</strong>
+      {{ object.delivery_address|default:"-" }}
+    </p>
+    <p>
+      <strong>{% if LANGUAGE_CODE == 'ru' %}Дата создания{% else %}Created at{% endif %}:</strong>
+      {{ object.created_at|date:"d.m.Y H:i" }}
+    </p>
+
+    <div>
+      <strong>{% if LANGUAGE_CODE == 'ru' %}Товары в заказе{% else %}Products in order{% endif %}:</strong>
+      <ul>
+        {% for product in object.products.all %}
+          <li>{{ product.name }} - {{ product.price }} {% if LANGUAGE_CODE == 'ru' %}руб.{% else %}RUB{% endif %}</li>
+        {% empty %}
+          <li>{% if LANGUAGE_CODE == 'ru' %}Нет товаров{% else %}No products{% endif %}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div>
+    <a href="{% url 'shopapp:orders_list' %}">
+      ← {% if LANGUAGE_CODE == 'ru' %}Назад к списку заказов{% else %}Back to orders list{% endif %}
+    </a>
+  </div>
+{% endblock %}
